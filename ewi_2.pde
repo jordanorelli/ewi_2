@@ -3,6 +3,8 @@ import themidibus.*;
 MidiBus myBus;
 int y = 0;
 int vel = 0;
+int MIN_NOTE = 36;
+int MAX_NOTE = 98;
 
 void setup() {
   size(720, 840, P2D);
@@ -12,18 +14,13 @@ void setup() {
 
 void draw() {
   background(0);
-  float ny = norm(y, 36, 98) * height;
-  stroke(180, 180, 180, vel);
+
+  colorMode(HSB, 11, 1.0, 1.0, 1.0);
+  stroke(y % 12, 1.0, 1.0, pow(norm(vel, 0, 127), 2));
   strokeWeight(pow(norm(vel, 0, 127), 2) * 40);
+  float ny = norm(y, MIN_NOTE, MAX_NOTE) * height;
   line(0, height - ny, width, height - ny);
-  
-//  stroke(255);
-//  strokeWeight(4);
-//  pushMatrix();
-//  translate(width * 0.5, height);
-//  rotate(TWO_PI * 0.5 * (bend - 0.5));
-//  line(0, 0, 0, -200);  
-//  popMatrix();
+
 }
 
 int countOn;
