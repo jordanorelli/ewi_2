@@ -12,17 +12,19 @@ int slurStartPitch;
 int slurEndPitch;
 
 void setup() {
-//  size(1440, 900, P2D);
-  size(1024, 768);
+  size(1440, 900, P2D);
+//  size(1024, 768);
   blendMode(ADD);
   smooth();
   background(0);
   myBus = new MidiBus(this, 0, -1);
   colorMode(HSB, 12, 1.0, 1.0, 1.0);
+  setup_drums();
 }
 
 void draw() {
   background(0, 0.0, 0);
+  draw_drums();  
   slurFrame = frameCount - slurStartFrame;
   if (slurFrame >= 0 && slurFrame < SLUR_FRAMES) {
     drawSlur(slurFrame);
