@@ -1,5 +1,6 @@
 import themidibus.*;
 
+Flock flock;
 MidiBus myBus;
 int y = 0;
 float vel = 0;
@@ -12,19 +13,21 @@ int slurStartPitch;
 int slurEndPitch;
 
 void setup() {
-  size(1440, 900, P2D);
-//  size(1024, 768);
+//  size(1440, 900, P2D);
+  size(1024, 768, P2D);
   blendMode(ADD);
   smooth();
   background(0);
   myBus = new MidiBus(this, 0, -1);
   colorMode(HSB, 12, 1.0, 1.0, 1.0);
   setup_drums();
+  flock = new Flock();  
 }
 
 void draw() {
   background(0, 0.0, 0);
   draw_drums();  
+  flock.update();
   slurFrame = frameCount - slurStartFrame;
   if (slurFrame >= 0 && slurFrame < SLUR_FRAMES) {
     drawSlur(slurFrame);
@@ -34,7 +37,7 @@ void draw() {
 }
 
 void drawNote() {
-  float hue = y % 12 + (2.0 * bend);
+  float hue = pitchHue(y);
   float ny = height - (norm(y, MIN_NOTE, MAX_NOTE) * height);
   float dy = vel * bend * 120.0;
   
@@ -49,10 +52,10 @@ void drawSlur(int slurFrame) {
   float n = pow(norm(slurFrame, 0, SLUR_FRAMES), 0.25);
   float y = lerp(slurStartPitch, slurEndPitch, n);
 
-  float slurStartHue = slurStartPitch % 12 + (2.0 * bend);
+  float slurStartHue = pitchHue(slurStartPitch);
   float slurStartAlpha = (1.0 - n) * vel;
 
-  float slurEndHue = slurEndPitch % 12 + (2.0 * bend);
+  float slurEndHue = pitchHue(slurEndPitch);
   float slurEndAlpha = n * vel;
 
   float ny = height - (norm(y, MIN_NOTE, MAX_NOTE) * height);
@@ -66,6 +69,12 @@ void drawSlur(int slurFrame) {
 
   stroke(slurEndHue, 0.8, 0.8, slurEndAlpha);
   bezier(0, ny, 0.25 * width, ny - dy, 0.75 * width, ny - dy, width, ny);
+}
+
+float pitchHue(int pitch) {
+  float hue = pitch % 12 + (2.0 * bend);
+  hue = map(hue, 0., 12., 0., 2.5);
+  return hue;
 }
 
 int countOn;

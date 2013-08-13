@@ -26,6 +26,9 @@ class DrumNotes {
     case 2:
       this.notes.add(new ClapNote());
       return;
+    case 6:
+      this.notes.add(new HHNote());
+      return;
     }
   }
 }
@@ -33,9 +36,12 @@ class DrumNotes {
 class DrumNote {
   void draw() {}
   boolean isDead() { return false; }
+  float hue() { return 5.0; }
 }
 
 int MAX_BASS_DRUM_AGE = 12;
+class BassDrumSpark {
+}
 
 class BassDrumNote extends DrumNote {
   int age;
@@ -48,7 +54,7 @@ class BassDrumNote extends DrumNote {
     float n = norm(this.age, 0, MAX_BASS_DRUM_AGE);
     float y = height - (0.5 * height * pow(n, 0.8));
     strokeWeight(pow((1.0 - n), 0.5) * 120);
-    stroke(0, 0, 1, 1.0-n);
+    stroke(this.hue(), 1, 1, 1.0-n);
     line(0, y, width, y);
     this.age++;
   }
@@ -78,7 +84,7 @@ class SnareDrumSpark {
     pushMatrix();
     translate(this.origin.x, this.origin.y);
     rotate(this.velocity.heading());
-    stroke(0, 0, 1, 1.0 - norm(this.age, 0, MAX_SNARE_DRUM_AGE));
+    stroke(5.0, 1, 1, 1.0 - norm(this.age, 0, MAX_SNARE_DRUM_AGE));
     strokeWeight(20);
     float w = width / (float)NUM_SNARE_SPARKS;
     line(0, -w * 0.5, 0, w * 0.5);
@@ -128,7 +134,7 @@ class ClapNote extends DrumNote {
     pushMatrix();
     translate(width * 0.5, height * 0.5);
     noFill();
-    stroke(0, 0, 1, 1.0-n);
+    stroke(this.hue(), 1, 1, 1.0-n);
     rotate(this.theta + n * TWO_PI);
     strokeWeight(n * 400.0);
     rectMode(CENTER);
@@ -141,3 +147,18 @@ class ClapNote extends DrumNote {
   }
 }
 
+class HHNote extends DrumNote {
+  HHNote() {
+    int n = 40;
+    for (int i = 0; i < n; i++) {
+      Boid boid = new Boid(flock, norm(i, 0, n) * width, height * 0.2);
+      boid.velocity.x = random(-20, 20);
+      boid.velocity.y = random(-20, 20);
+      flock.addBoid(boid);
+    }
+  }
+  void draw() {}
+  boolean isDead() {
+    return false;
+  }
+}
